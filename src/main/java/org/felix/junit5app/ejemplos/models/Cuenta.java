@@ -1,5 +1,7 @@
 package org.felix.junit5app.ejemplos.models;
 
+import org.felix.junit5app.ejemplos.exceptions.DineroInsuficienteException;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -29,7 +31,11 @@ public class Cuenta {
     }
 
     public void debito(BigDecimal monto) {
-        this.saldo = this.saldo.subtract(monto);
+        BigDecimal nuevoSaldo = this.saldo.subtract(monto);
+        if(nuevoSaldo.compareTo(BigDecimal.ZERO) < 0){ //la persona no tiene dinero suficiente para realizar la transacción
+            throw new DineroInsuficienteException("Dinero Insuficiente");
+        }
+        this.saldo = nuevoSaldo;
     }
 
     public void credito(BigDecimal monto) {

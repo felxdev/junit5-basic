@@ -1,5 +1,6 @@
 package org.felix.junit5app.ejemplos.models;
 
+import org.felix.junit5app.ejemplos.exceptions.DineroInsuficienteException;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -45,10 +46,22 @@ class CuentaTest {
 
     @Test
     void testCreditoCuenta(){
-        Cuenta cuenta = new Cuenta("Andres", new BigDecimal(1000.12345));
+        Cuenta cuenta = new Cuenta("Andres", new BigDecimal(1000));
         cuenta.credito(new BigDecimal(100));
         assertNotNull(cuenta.getSaldo());
         assertEquals(1100, cuenta.getSaldo().intValue());
-        assertEquals("110.12345", cuenta.getSaldo().toPlainString());
+        assertEquals("1100", cuenta.getSaldo().toPlainString());
+    }
+
+    @Test
+    void testDineroInsuficienteException() {
+        Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+        DineroInsuficienteException dineroInsuficienteException = assertThrows(DineroInsuficienteException.class, () -> {
+            cuenta.debito(new BigDecimal(1500));
+        });
+
+        String actual = dineroInsuficienteException.getMessage();
+        String esperado = "Dinero Insuficiente";
+        assertEquals(esperado, actual);
     }
 }
